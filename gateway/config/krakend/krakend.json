@@ -1,0 +1,211 @@
+{
+  "$schema": "https://www.krakend.io/schema/v3.json",
+  "version": 3,
+  "name": "KrakenD API Gateway",
+  "port": 8080,
+  "host": [
+    "http://10.0.0.112:8080"
+  ],
+  "timeout": "3000ms",
+  "cache_ttl": "300s",
+  "endpoints": [
+    {
+      "endpoint": "/qr/Generate",
+      "method": "POST",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/generate",
+          "encoding": "json",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://10.0.0.112:8082"
+          ],
+          "disable_host_sanitize": true,
+          "extra_config": {
+            "qos/http-cache": {
+              "shared": true
+            },
+            "qos/circuit-breaker": {
+              "interval": 60,
+              "name": "circuit-breaker-1",
+              "timeout": 10,
+              "max_errors": 5,
+              "log_status_change": true
+            }
+          }
+        }
+      ],
+      "input_headers": [
+        "Content-Length"
+      ]
+    },
+    {
+      "endpoint": "/qr/GetQrCode",
+      "method": "POST",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/GetQrCode",
+          "encoding": "json",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://10.0.0.112:5000"
+          ],
+          "disable_host_sanitize": false,
+          "extra_config": {
+            "qos/http-cache": {
+              "shared": true
+            }
+          }
+        }
+      ],
+      "input_headers": [
+        "*"
+      ]
+    },
+    {
+      "endpoint": "/qr/Decrypt",
+      "method": "POST",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/decrypt",
+          "encoding": "json",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://10.0.0.112:8083"
+          ],
+          "disable_host_sanitize": false,
+          "extra_config": {
+            "qos/http-cache": {
+              "shared": true
+            }
+          }
+        }
+      ],
+      "input_headers": [
+        "*"
+      ]
+    }
+  ],
+  "sequential_start": true,
+  "async_agent": [
+    {
+      "name": "async-agent-demo",
+      "backend": [
+        {
+          "host": [
+            "http://127.0.0.1:8080"
+          ],
+          "url_pattern": "/__debug/async-agent-demo",
+          "method": "POST"
+        }
+      ],
+      "consumer": {
+        "topic": "*.bar",
+        "workers": 20
+      },
+      "connection": {
+        "max_retries": 10,
+        "backoff_strategy": "exponential-jitter"
+      },
+      "extra_config": {
+        "async/amqp": {
+          "name": "krakend",
+          "host": "amqp://guest:guest@rabbitmq:5672/",
+          "exchange": "foo",
+          "prefetch_count": 40,
+          "auto_ack": true
+        }
+      }
+    }
+  ],
+  "extra_config": {
+    "telemetry/metrics": {
+      "collection_time": "30s",
+      "listen_address": ":8090"
+    },
+    "telemetry/influx": {
+      "address": "http://influxdb:8086",
+      "ttl": "25s",
+      "buffer_size": 100,
+      "username": "krakend-dev",
+      "password": "pas5w0rd"
+    },
+    "telemetry/logging": {
+      "level": "DEBUG",
+      "prefix": "[KRAKEND]",
+      "syslog": true,
+      "stdout": true,
+      "format": "logstash",
+      "syslog_facility": "local0"
+    },
+    "telemetry/gelf": {
+      "address": "logstash:12201",
+      "enable_tcp": false
+    },
+    "telemetry/opencensus": {
+      "sample_rate": 100,
+      "reporting_period": 1,
+      "enabled_layers": {
+        "backend": true,
+        "router": true
+      },
+      "exporters": {
+        "jaeger": {
+          "endpoint": "http://jaeger:14268/api/traces",
+          "service_name": "krakend"
+        },
+        "prometheus": {
+          "port": 9091
+        },
+        "logger": {}
+      }
+    },
+    "security/cors": {
+      "allow_origins": [
+        "*"
+      ],
+      "allow_methods": [
+        "POST",
+        "GET"
+      ],
+      "allow_headers": [
+        "Origin",
+        "Authorization",
+        "Content-Type"
+      ],
+      "expose_headers": [
+        "Content-Length"
+      ],
+      "max_age": "12h"
+    },
+    "auth/revoker": {
+      "N": 10000000,
+      "P": 1e-7,
+      "hash_name": "optimal",
+      "TTL": 1500,
+      "port": 1234,
+      "token_keys": [
+        "jti"
+      ]
+    },
+    "telemetry/logstash": {
+      "enabled": true
+    },
+    "security/http": {
+      "allowed_hosts": [],
+      "ssl_proxy_headers": {},
+      "frame_deny": true,
+      "custom_frame_options_value": "SAMEORIGIN",
+      "content_type_nosniff": true,
+      "browser_xss_filter": true
+    }
+  },
+  "output_encoding": "json",
+  "allow_insecure_connections": true
+}

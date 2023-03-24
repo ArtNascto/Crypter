@@ -1,7 +1,7 @@
 package global
 
 import (
-	"qr_generator/internal/models/dtos"
+	"decrypt/internal/models/dtos"
 
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"

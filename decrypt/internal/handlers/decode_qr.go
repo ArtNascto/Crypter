@@ -3,13 +3,13 @@ package handlers
 import (
 	"crypto/rand"
 	"crypto/rsa"
+	"decrypt/internal/global"
+	"decrypt/internal/utils"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"qr_generator/internal/global"
-	"qr_generator/internal/utils"
 
 	"github.com/gin-gonic/gin"
 	"gopkg.in/h2non/gentleman.v2"
@@ -29,7 +29,7 @@ func DecodeQrCode(c *gin.Context) {
 	cli := gentleman.New()
 
 	// Define the Base URL
-	cli.URL("http://localhost:5000/GetQrCode")
+	cli.URL(global.Config.QRDecoder)
 
 	// Create a new request based on the current client
 	req := cli.Request()
@@ -57,7 +57,7 @@ func DecodeQrCode(c *gin.Context) {
 	json.Unmarshal([]byte(res.String()), &data)
 	if len(data.QrResponse.Values) > 0 {
 
-		pemData, err := ioutil.ReadFile(global.RSAPrivateKeyLocation)
+		pemData, err := ioutil.ReadFile(global.Config.RSAPrivateKey)
 		if err != nil {
 			global.Log.Error(err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

@@ -21,7 +21,7 @@ func EncryptQrCode(c *gin.Context) {
 		return
 	}
 
-	pemData, err := ioutil.ReadFile(global.RSAPublicKeyLocation)
+	pemData, err := ioutil.ReadFile(global.Config.RSAPublicKey)
 	if err != nil {
 		global.Log.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

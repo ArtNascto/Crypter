@@ -1,9 +1,9 @@
 package main
 
 import (
+	"decrypt/internal/global"
+	"decrypt/internal/handlers"
 	"os"
-	"qr_generator/internal/global"
-	"qr_generator/internal/handlers"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -27,7 +27,7 @@ func init() {
 	viper.AddConfigPath(".")
 
 	// Tell viper the name of your file
-	viper.SetConfigName("generator")
+	viper.SetConfigName("decrypt")
 
 	// Tell viper the type of your file
 	viper.SetConfigType("env")
@@ -54,9 +54,9 @@ func main() {
 	r := gin.Default()
 	r.GET("/ping", handlers.Ping)
 	r.GET("/debug/statsviz/*filepath", handlers.GetStatus)
-	r.POST("/generate", handlers.EncryptQrCode)
+	r.POST("/decrypt", handlers.DecodeQrCode)
 	if global.Config.PORT == "" {
-		global.Config.PORT = "8082"
+		global.Config.PORT = "8083"
 	}
 	r.Run(":" + global.Config.PORT)
 }
