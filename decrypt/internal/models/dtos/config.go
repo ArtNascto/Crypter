@@ -6,7 +6,6 @@ type Config struct {
 	PostgresDBName   string `mapstructure:"PostgresDBName"`
 	PostgresUser     string `mapstructure:"PostgresUser"`
 	PostgresPassword string `mapstructure:"PostgresPassword"`
-	RSAPublicKey     string `mapstructure:"RSAPublicKey"`
 	RSAPrivateKey    string `mapstructure:"RSAPrivateKey"`
 	PORT             string `mapstructure:"Port"`
 	QRDecoder        string `mapstructure:"QRDecoder"`

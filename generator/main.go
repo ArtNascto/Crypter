@@ -31,14 +31,15 @@ func init() {
 
 	// Tell viper the type of your file
 	viper.SetConfigType("env")
+	viper.AutomaticEnv()
 	if err := viper.ReadInConfig(); err != nil {
-		global.Log.Fatal(err)
-		os.Exit(0)
+		global.Log.Info("Reading from runtime enviroments")
+		ReadConfFromRuntime()
 	}
 	err := viper.Unmarshal(&global.Config)
 	if err != nil {
-		global.Log.Fatal(err)
-		os.Exit(0)
+		global.Log.Info("Reading from runtime enviroments")
+		ReadConfFromRuntime()
 	}
 	dsn := "host=" + global.Config.PostgresHost + " user=" + global.Config.PostgresUser + " password=" + global.Config.PostgresPassword + " dbname=" + global.Config.PostgresDBName + " port=" + global.Config.PostgresPort + " sslmode=disable"
 	global.DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
@@ -59,4 +60,14 @@ func main() {
 		global.Config.PORT = "8082"
 	}
 	r.Run(":" + global.Config.PORT)
+}
+func ReadConfFromRuntime() {
+
+	global.Config.PostgresPort = os.Getenv("PostgresPort")
+	global.Config.PostgresHost = os.Getenv("PostgresHost")
+	global.Config.PostgresDBName = os.Getenv("PostgresDBName")
+	global.Config.PostgresUser = os.Getenv("PostgresUser")
+	global.Config.PostgresPassword = os.Getenv("PostgresPassword")
+	global.Config.RSAPublicKey = os.Getenv("RSAPublicKey")
+	global.Config.PORT = os.Getenv("Port")
 }
