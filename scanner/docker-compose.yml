@@ -1,0 +1,6 @@
+services:
+  qr:
+    # build: .
+    image: gitlab-registry.hsprevent.com.br/dev/qr-extractor
+    ports:
+      - 5000:5000

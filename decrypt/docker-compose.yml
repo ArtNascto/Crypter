@@ -8,10 +8,10 @@ services:
       - ./qr_private.key:/app/qr_private.key
     environment:
       - PostgresPort=5432
-      - PostgresHost=10.0.0.112
+      - PostgresHost=10.10.176.12
       - PostgresDBName=postgres
       - PostgresUser=ADMIN
       - PostgresPassword=admin_pass
       - RSAPrivateKey=/app/qr_private.key
       - Port=8083
-      - QRDecoder=http://10.0.0.112:8080/qr/GetQrCode
+      - QRDecoder=http://10.10.176.12:8080/qr/GetQrCode

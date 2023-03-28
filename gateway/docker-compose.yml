@@ -1,8 +1,7 @@
 version: "3"
 services:
   krakend_ce:
-    # The :watch image restarts the service automatically when the configuration files change.
-    # Do not use this image in production, it's meant to speed up your testing and development.
+    restart: always
     image: devopsfaith/krakend:watch
     volumes:
       - ./config/krakend:/etc/krakend
@@ -15,6 +14,7 @@ services:
     depends_on:
       - jaeger
   grafana:
+    restart: always
     image: grafana/grafana:9.1.2
     ports:
       - "4000:3000"
@@ -23,6 +23,7 @@ services:
       - "./config/grafana/dashboards/all.yml:/etc/grafana/provisioning/dashboards/all.yml"
       - "./config/grafana/krakend:/var/lib/grafana/dashboards/krakend"
   influxdb:
+    restart: always
     image: influxdb:1.8.10
     environment:
       - "INFLUXDB_DB=krakend"
@@ -33,11 +34,13 @@ services:
     ports:
       - "8086:8086"
   jaeger:
+    restart: always
     image: jaegertracing/all-in-one:1
     ports:
       - "16686:16686"
       - "14268:14268"
   elasticsearch:
+    restart: always
     image: elasticsearch:8.4.1
     environment:
       - "discovery.type=single-node"
@@ -48,10 +51,12 @@ services:
       - "19200:9200"
       - "9300:9300"
   kibana:
+    restart: always
     image: kibana:8.4.1
     ports:
       - "5601:5601"
   logstash:
+    restart: always
     image: logstash:8.4.1
     ports:
       - "12201:12201/udp"
@@ -62,6 +67,7 @@ services:
       - ./config/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
     command: ["-f", "/usr/share/logstash/pipeline/logstash.conf"]
   rabbitmq:
+    restart: always
     image: rabbitmq:3-management
     ports:
       - "15672:15672"

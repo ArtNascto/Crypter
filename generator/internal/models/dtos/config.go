@@ -8,4 +8,5 @@ type Config struct {
 	PostgresPassword string `mapstructure:"PostgresPassword"`
 	RSAPublicKey     string `mapstructure:"RSAPublicKey"`
 	PORT             string `mapstructure:"Port"`
+	Key              string `mapstructure:"Key"`
 }
