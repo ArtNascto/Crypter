@@ -27,9 +27,10 @@ func EncryptQrCode(c *gin.Context) {
 	}
 	data := dtos.Data{
 		CreatedAt: time.Now(),
-		ExpiresAt: time.Now().Add(4 * time.Minute),
+		ExpiresAt: time.Now().Add(4 * time.Second),
 		ID:        guid.New().StringUpper(),
 		Data:      msg,
+		DataType:  c.ContentType(),
 	}
 
 	pemData, err := ioutil.ReadFile(global.Config.RSAPublicKey)
@@ -63,13 +64,20 @@ func EncryptQrCode(c *gin.Context) {
 		return
 	}
 
-	var png []byte
-	png, err = qrcode.Encode(string(base64.StdEncoding.EncodeToString(encryptedBytes)), qrcode.Low, 256)
+	result, err := GenerateQR(base64.StdEncoding.EncodeToString(encryptedBytes))
 	if err != nil {
 		global.Log.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	result := base64.StdEncoding.EncodeToString(png)
+
 	c.JSON(http.StatusOK, gin.H{"result": result})
+}
+func GenerateQR(data string) (string, error) {
+	var png []byte
+	png, err := qrcode.Encode(data, qrcode.Low, 256)
+	if err != nil {
+		return "", err
+	}
+	return base64.StdEncoding.EncodeToString(png), nil
 }
