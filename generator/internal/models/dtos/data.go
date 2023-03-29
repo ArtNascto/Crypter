@@ -7,5 +7,5 @@ type Data struct {
 	ExpiresAt time.Time
 	ID        string
 	DataType  string
-	Data      interface{}
+	Data      []byte
 }

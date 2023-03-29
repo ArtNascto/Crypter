@@ -27,8 +27,16 @@ func EncryptQrCode(c *gin.Context) {
 	}
 	expTime := 4 * time.Minute
 	lim := 24
-	msg1 := msg[:lim]
-	msg2 := msg[lim:]
+	var msg1 []byte
+	var msg2 []byte
+	if len(msg) > lim {
+		msg1 = msg[:lim]
+		msg2 = msg[lim:]
+	} else {
+		lim = len(msg) / 2
+		msg1 = msg[:lim]
+		msg2 = msg[lim:]
+	}
 	createdAt := time.Now()
 	expiresAt := time.Now().Add(expTime)
 	token := guid.New().StringUpper()
@@ -85,18 +93,23 @@ func EncryptQrCode(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	err = global.RedisClient.Set(token, data2, expTime).Err()
+	_, err = global.RH.JSONSet(token, ".", data2)
 	if err != nil {
 		global.Log.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
+	err = global.RedisClient.Expire(token, expTime).Err()
+	if err != nil {
+		global.Log.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{"result": result})
 }
 func GenerateQR(data string) (string, error) {
 	var png []byte
-	png, err := qrcode.Encode(data, qrcode.Low, 256)
+	png, err := qrcode.Encode(data, qrcode.High, 256)
 	if err != nil {
 		return "", err
 	}

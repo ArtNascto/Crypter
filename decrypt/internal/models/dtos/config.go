@@ -1,7 +1,7 @@
 package dtos
 
 type Config struct {
-	PostgresPort     string `mapstructure:"PostgresPort"`
+	PostgresPort     int    `mapstructure:"PostgresPort"`
 	PostgresHost     string `mapstructure:"PostgresHost"`
 	PostgresDBName   string `mapstructure:"PostgresDBName"`
 	PostgresUser     string `mapstructure:"PostgresUser"`
@@ -9,4 +9,6 @@ type Config struct {
 	RSAPrivateKey    string `mapstructure:"RSAPrivateKey"`
 	PORT             string `mapstructure:"Port"`
 	QRDecoder        string `mapstructure:"QRDecoder"`
+	RedisAddress     string `mapstructure:"RedisAddress"`
+	RedisDB          int    `mapstructure:"RedisDB"`
 }

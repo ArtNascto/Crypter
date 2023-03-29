@@ -111,13 +111,56 @@ func DecodeQrCode(c *gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"result": string(decryptedBytes)})
+		res, err := global.RH.JSONGet(data.ID, ".")
+		if err != nil {
+			global.Log.Error(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		var objOut dtos.Data
+		err = json.Unmarshal(res.([]byte), &objOut)
+		if err != nil {
+			global.Log.Error(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		dataConcat := append(data.Data, objOut.Data...)
+		if data.DataType != "application/json" {
+			err = removeContent(data.ID)
+			if err != nil {
+				global.Log.Error(err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+			c.Data(http.StatusOK, data.DataType, dataConcat)
+		} else {
+			var r map[string]interface{}
+			err = json.Unmarshal(dataConcat, &r)
+			if err != nil {
+				global.Log.Error(err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+			err = removeContent(data.ID)
+			if err != nil {
+				global.Log.Error(err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+			c.JSON(http.StatusOK, gin.H{"result": r})
+		}
 	} else {
-		c.JSON(http.StatusOK, gin.H{"result": ""})
+		c.JSON(http.StatusNotFound, gin.H{})
 
 	}
 }
-
+func removeContent(id string) error {
+	err := global.RedisClient.Del(id).Err()
+	if err != nil {
+		return err
+	}
+	return nil
+}
 func expired(exp time.Time) (bool, error) {
 	now := time.Now()
 	if now.Sub(exp).Seconds() <= 0 {

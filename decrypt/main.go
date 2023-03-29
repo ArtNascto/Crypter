@@ -4,8 +4,11 @@ import (
 	"decrypt/internal/global"
 	"decrypt/internal/handlers"
 	"os"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis"
+	"github.com/nitishm/go-rejson"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gorm.io/driver/postgres"
@@ -41,12 +44,29 @@ func init() {
 		global.Log.Info("Reading from runtime enviroments")
 		ReadConfFromRuntime()
 	}
-	dsn := "host=" + global.Config.PostgresHost + " user=" + global.Config.PostgresUser + " password=" + global.Config.PostgresPassword + " dbname=" + global.Config.PostgresDBName + " port=" + global.Config.PostgresPort + " sslmode=disable"
+
+	postgrestPort := strconv.Itoa(global.Config.PostgresPort)
+	dsn := "host=" + global.Config.PostgresHost + " user=" + global.Config.PostgresUser + " password=" + global.Config.PostgresPassword + " dbname=" + global.Config.PostgresDBName + " port=" + postgrestPort + " sslmode=disable"
 	global.DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		global.Log.Fatal(err)
 		os.Exit(0)
 	}
+
+	global.RedisClient = redis.NewClient(&redis.Options{
+		Addr:     global.Config.RedisAddress,
+		Password: "",
+		DB:       global.Config.RedisDB,
+	})
+
+	_, err = global.RedisClient.Ping().Result()
+	if err != nil {
+		global.Log.Fatal(err)
+		os.Exit(0)
+	}
+
+	global.RH = rejson.NewReJSONHandler()
+	global.RH.SetGoRedisClient(global.RedisClient)
 
 }
 
@@ -64,7 +84,7 @@ func main() {
 
 func ReadConfFromRuntime() {
 
-	global.Config.PostgresPort = os.Getenv("PostgresPort")
+	global.Config.PostgresPort, _ = strconv.Atoi(os.Getenv("PostgresPort"))
 	global.Config.PostgresHost = os.Getenv("PostgresHost")
 	global.Config.PostgresDBName = os.Getenv("PostgresDBName")
 	global.Config.PostgresUser = os.Getenv("PostgresUser")
@@ -72,4 +92,6 @@ func ReadConfFromRuntime() {
 	global.Config.RSAPrivateKey = os.Getenv("RSAPrivateKey")
 	global.Config.PORT = os.Getenv("Port")
 	global.Config.QRDecoder = os.Getenv("QRDecoder")
+	global.Config.RedisAddress = os.Getenv("RedisAddress")
+	global.Config.RedisDB, _ = strconv.Atoi(os.Getenv("RedisDB"))
 }

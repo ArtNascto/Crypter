@@ -1,7 +1,7 @@
 package dtos
 
 type Config struct {
-	PostgresPort     string `mapstructure:"PostgresPort"`
+	PostgresPort     int    `mapstructure:"PostgresPort"`
 	PostgresHost     string `mapstructure:"PostgresHost"`
 	PostgresDBName   string `mapstructure:"PostgresDBName"`
 	PostgresUser     string `mapstructure:"PostgresUser"`

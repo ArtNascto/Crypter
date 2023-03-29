@@ -33,6 +33,9 @@
               "timeout": 10,
               "max_errors": 5,
               "log_status_change": true
+            },
+            "backend/http": {
+              "return_error_code": true
             }
           }
         }
@@ -58,6 +61,16 @@
           "extra_config": {
             "qos/http-cache": {
               "shared": true
+            },
+            "qos/circuit-breaker": {
+              "interval": 60,
+              "name": "circuit-breaker-1",
+              "timeout": 10,
+              "max_errors": 5,
+              "log_status_change": true
+            },
+            "backend/http": {
+              "return_error_code": true
             }
           }
         }
@@ -69,26 +82,36 @@
     {
       "endpoint": "/qr/Decrypt",
       "method": "POST",
-      "output_encoding": "json",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
       "backend": [
         {
           "url_pattern": "/decrypt",
-          "encoding": "json",
+          "encoding": "no-op",
           "sd": "static",
           "method": "POST",
-          "host": [
-            "http://10.10.176.12:8083"
-          ],
-          "disable_host_sanitize": false,
           "extra_config": {
             "qos/http-cache": {
               "shared": true
+            },
+            "qos/circuit-breaker": {
+              "interval": 60,
+              "name": "circuit-breaker-1",
+              "timeout": 10,
+              "max_errors": 5,
+              "log_status_change": true
+            },
+            "backend/http": {
+              "return_error_code": true
             }
-          }
+          },
+          "host": [
+            "http://10.10.176.12:8083"
+          ],
+          "disable_host_sanitize": false
         }
-      ],
-      "input_headers": [
-        "*"
       ]
     }
   ],

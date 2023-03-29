@@ -7,11 +7,14 @@ services:
     volumes:
       - ./qr_private.key:/app/qr_private.key
     environment:
-      - PostgresPort=5432
-      - PostgresHost=10.10.176.12
-      - PostgresDBName=postgres
-      - PostgresUser=ADMIN
-      - PostgresPassword=admin_pass
-      - RSAPrivateKey=/app/qr_private.key
-      - Port=8083
-      - QRDecoder=http://10.10.176.12:8080/qr/GetQrCode
+      - PostgresPort="5432"
+      - PostgresHost="10.10.176.12"
+      - PostgresDBName="postgres"
+      - PostgresUser="ADMIN"
+      - PostgresPassword="admin_pass"
+      - RSAPublicKey="./qr_public.pem"
+      - RSAPrivateKey="./qr_private.key"
+      - Port="8083"
+      - QRDecoder="http://10.10.176.12:8080/qr/GetQrCode"
+      - RedisAddress=10.10.176.12:6379
+      - RedisDB=0

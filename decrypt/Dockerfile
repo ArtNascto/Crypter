@@ -21,4 +21,6 @@ ENV PostgresPassword=admin_pass
 ENV RSAPrivateKey=./qr_private.key
 ENV Port=8083
 ENV QRDecoder=http://localhost:8080/qr/GetQrCode
+ENV RedisAddress=localhost:6379
+ENV RedisDB=0
 ENTRYPOINT [ "./decrypt" ]
