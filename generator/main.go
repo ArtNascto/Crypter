@@ -6,6 +6,7 @@ import (
 	"qr_generator/internal/handlers"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gorm.io/driver/postgres"
@@ -43,6 +44,18 @@ func init() {
 	}
 	dsn := "host=" + global.Config.PostgresHost + " user=" + global.Config.PostgresUser + " password=" + global.Config.PostgresPassword + " dbname=" + global.Config.PostgresDBName + " port=" + global.Config.PostgresPort + " sslmode=disable"
 	global.DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		global.Log.Fatal(err)
+		os.Exit(0)
+	}
+
+	global.RedisClient = redis.NewClient(&redis.Options{
+		Addr:     global.Config.RedisAddress,
+		Password: "",
+		DB:       global.Config.RedisDB,
+	})
+
+	_, err = global.RedisClient.Ping().Result()
 	if err != nil {
 		global.Log.Fatal(err)
 		os.Exit(0)

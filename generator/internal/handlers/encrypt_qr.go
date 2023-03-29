@@ -25,12 +25,27 @@ func EncryptQrCode(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	data := dtos.Data{
-		CreatedAt: time.Now(),
-		ExpiresAt: time.Now().Add(4 * time.Second),
-		ID:        guid.New().StringUpper(),
-		Data:      msg,
-		DataType:  c.ContentType(),
+	expTime := 4 * time.Minute
+	lim := 24
+	msg1 := msg[:lim]
+	msg2 := msg[lim:]
+	createdAt := time.Now()
+	expiresAt := time.Now().Add(expTime)
+	token := guid.New().StringUpper()
+	dataType := c.ContentType()
+	data1 := dtos.Data{
+		CreatedAt: createdAt,
+		ExpiresAt: expiresAt,
+		ID:        token,
+		Data:      msg1,
+		DataType:  dataType,
+	}
+	data2 := dtos.Data{
+		CreatedAt: createdAt,
+		ExpiresAt: expiresAt,
+		ID:        token,
+		Data:      msg2,
+		DataType:  dataType,
 	}
 
 	pemData, err := ioutil.ReadFile(global.Config.RSAPublicKey)
@@ -50,7 +65,7 @@ func EncryptQrCode(c *gin.Context) {
 
 	var network bytes.Buffer
 	enc := gob.NewEncoder(&network)
-	err = enc.Encode(data)
+	err = enc.Encode(data1)
 	if err != nil {
 		global.Log.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -65,6 +80,12 @@ func EncryptQrCode(c *gin.Context) {
 	}
 
 	result, err := GenerateQR(base64.StdEncoding.EncodeToString(encryptedBytes))
+	if err != nil {
+		global.Log.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	err = global.RedisClient.Set(token, data2, expTime).Err()
 	if err != nil {
 		global.Log.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

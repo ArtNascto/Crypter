@@ -9,4 +9,6 @@ type Config struct {
 	RSAPublicKey     string `mapstructure:"RSAPublicKey"`
 	PORT             string `mapstructure:"Port"`
 	Key              string `mapstructure:"Key"`
+	RedisAddress     string `mapstructure:"RedisAddress"`
+	RedisDB          int    `mapstructure:"RedisDB"`
 }

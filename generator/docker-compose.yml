@@ -14,4 +14,5 @@ services:
       - PostgresPassword=admin_pass
       - RSAPublicKey=/app/qr_public.pem
       - Port=8082
-      - Key=)J@NcRfUjXn2r5u8x!A%D*G-KaPdSgVkYp3s6v9yB?E(H+MbQeThWmZq4t7w!z%C*F)J@NcRfUjXn2r5u8x/A?D(G+KaPdSgVkYp3s6v9yB&E)H@McQeThWmZq4t7w!z%C*F-JaNdRgUjXn2r5u8x/A?D(G+KbPeShVmYp3s6v9yB&E)H@McQfTjWnZr4t7w!z%C*F-JaNdRgUkXp2s5v8x/A?D(G+KbPeShVmYq3t6w9zB&E)H@McQfTjWnZr4u7x!A%D*F-JaNdRgUkXp2s5v8y/B?E(H+KbPeShVmYq3t6w9zC&F)J@NcQfTjWnZr4u7x!A%D*G-KaPdSgUkXp2s5v8y/B?E(H+MbQeThWmYq3t6w9zC&F)J@NcRfUjXn2r4u7x!A%D*G-KaPdSgVkYp3s6v8y/B?E(H+MbQeThWmZq4t7w!z%C&F)J@NcRfUjXn2r5u8x/A?D(G-KaPdSgVkYp3s6v9yB&E)H@MbQeThWmZq4t7w!z%C*
+      - RedisAddress=10.10.176.12:6379
+      - RedisDB=0

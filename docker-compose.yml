@@ -9,3 +9,8 @@ services:
     environment:
       POSTGRES_PASSWORD: admin_pass
       POSTGRES_USER: ADMIN
+  redis:
+    image: redis:7.0.7
+    restart: always
+    ports:
+      - 6379:6379  
