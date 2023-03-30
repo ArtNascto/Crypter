@@ -73,6 +73,7 @@ func init() {
 func main() {
 
 	r := gin.Default()
+
 	r.GET("/ping", handlers.Ping)
 	r.GET("/debug/statsviz/*filepath", handlers.GetStatus)
 	r.POST("/generate", handlers.EncryptQrCode)

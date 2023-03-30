@@ -105,7 +105,7 @@ func EncryptQrCode(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"result": result})
+	c.JSON(http.StatusOK, gin.H{"data": result, "id": token, "expirationDate": utils.TimeToJavaScriptISO(time.Now().Add(expTime))})
 }
 func GenerateQR(data string) (string, error) {
 	var png []byte

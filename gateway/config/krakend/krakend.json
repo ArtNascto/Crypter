@@ -41,7 +41,7 @@
         }
       ],
       "input_headers": [
-        "Content-Length"
+        "*"
       ]
     },
     {
@@ -92,6 +92,9 @@
           "encoding": "no-op",
           "sd": "static",
           "method": "POST",
+          "host": [
+            "http://10.10.176.12:8083"
+          ],
           "extra_config": {
             "qos/http-cache": {
               "shared": true
@@ -107,9 +110,6 @@
               "return_error_code": true
             }
           },
-          "host": [
-            "http://10.10.176.12:8083"
-          ],
           "disable_host_sanitize": false
         }
       ]

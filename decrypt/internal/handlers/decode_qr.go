@@ -132,7 +132,8 @@ func DecodeQrCode(c *gin.Context) {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
-			c.Data(http.StatusOK, data.DataType, dataConcat)
+			str := base64.StdEncoding.EncodeToString(dataConcat)
+			c.JSON(http.StatusOK, gin.H{"data": str, "contentType": data.DataType, "id": data.ID})
 		} else {
 			var r map[string]interface{}
 			err = json.Unmarshal(dataConcat, &r)

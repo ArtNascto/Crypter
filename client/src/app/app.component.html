@@ -1,8 +1,57 @@
 <div class="container p-5">
-  <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
-    <mat-tab label="Send File">
-      <div>
-      </div>
-    </mat-tab>
-  </mat-tab-group>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Crypter</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" dynamicHeight>
+        <mat-tab label="Generate QR">
+          <div class="container p-5">
+            <ngx-dropzone (change)="onSelect($event)" [multiple]='false'>
+              <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+                Drag and drop or
+                <button class="p-1 btn btn-link" type="button" (click)="openFileSelector()">Browse Files</button>
+              </ng-template>
+              <ngx-dropzone-label>Insira um arquivo</ngx-dropzone-label>
+              <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onRemove(f)">
+                <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+              </ngx-dropzone-preview>
+            </ngx-dropzone>
+          </div>
+          <div class="d-flex align-content-start justify-content-start mt-5">
+            <button mat-button mat-raised-button color="primary" (click)="generateQR()" [disabled]="files.length <=0">
+              Gerar QR
+            </button>
+          </div>
+          <div class="container p-2" *ngIf="previewSrc">
+            {{expDate | date:'dd-MM-yyyy HH:mm:ss'}}
+            <br />
+            <img [src]="previewSrc">
+            <br />
+            <button mat-button mat-raised-button color="primary" (click)="DownloadImage()"
+              class="mt-3">Download</button>
+          </div>
+        </mat-tab>
+        <mat-tab label="Decode QR">
+          <div class="container p-5">
+            <ngx-dropzone (change)="onSelectDecode($event)" [multiple]='false'>
+              <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+                Drag and drop or
+                <button class="p-1 btn btn-link" type="button" (click)="openFileSelector()">Browse Files</button>
+              </ng-template>
+              <ngx-dropzone-label>Insira um arquivo</ngx-dropzone-label>
+              <ngx-dropzone-preview *ngFor="let f of filesDecode" [removable]="true" (removed)="onRemoveDecode(f)">
+                <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+              </ngx-dropzone-preview>
+            </ngx-dropzone>
+          </div>
+          <div class="d-flex align-content-start justify-content-start mt-5">
+            <button mat-button mat-raised-button color="primary" (click)="decodeQR()" [disabled]="filesDecode.length <=0">
+              Decode
+            </button>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card-content>
+  </mat-card>
 </div>

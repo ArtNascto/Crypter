@@ -10,9 +10,14 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { NgxDropzoneModule } from 'ngx-dropzone';
+import { PDFViewerComponent } from './pdf-viewer/pdf-viewer.component';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { MonitorInterceptor } from './monitor.interceptor';
+import { MatCardModule } from '@angular/material/card';
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent, PDFViewerComponent
   ],
   imports: [
     BrowserModule,
@@ -25,9 +30,16 @@ import { NgxDropzoneModule } from 'ngx-dropzone';
     ReactiveFormsModule,
     MatButtonModule,
     NgbModule,
-    NgxDropzoneModule
+    NgxDropzoneModule,
+    PdfViewerModule,
+    HttpClientModule,
+    MatCardModule
   ],
-  providers: [],
+  providers: [{
+    provide: HTTP_INTERCEPTORS,
+    useClass: MonitorInterceptor,
+    multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
