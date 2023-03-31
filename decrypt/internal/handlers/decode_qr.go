@@ -12,8 +12,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"time"
+
+	"github.com/avast/retry-go"
 
 	"github.com/gin-gonic/gin"
 	"gopkg.in/h2non/gentleman.v2"
@@ -44,8 +47,19 @@ func DecodeQrCode(c *gin.Context) {
 	// Define the JSON payload via body plugin
 	req.Use(body.JSON(reqBody))
 
-	// Perform the request
-	res, err := req.Send()
+	var res *gentleman.Response
+	err = retry.Do(
+		func() error {
+			var err error
+			res, err = req.Send()
+			return err
+		},
+		retry.Attempts(3),
+		retry.OnRetry(func(n uint, err error) {
+			log.Printf("Retrying request after error: %v", err)
+		}),
+	)
+
 	if err != nil {
 		global.Log.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
