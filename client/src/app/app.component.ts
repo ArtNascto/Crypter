@@ -1,27 +1,32 @@
-import { HttpClient, HttpEvent, HttpEventType, HttpHeaders, HttpUploadProgressEvent } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpEvent,
+  HttpEventType,
+  HttpHeaders,
+  HttpUploadProgressEvent,
+} from '@angular/common/http';
 import { Component } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { mimeTypes } from "mime-wrapper";
+import { mimeTypes } from 'mime-wrapper';
 import { QRDecodeOutput } from './interfaces/qr-decode-output';
 import { QREncodeOutput } from './interfaces/qr-encode-output.interface';
+import * as mime from 'mime-db';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  files: Array<File> = []
-  filesDecode: Array<File> = []
-  apiURL = "http://localhost:8080"
-  previewSrc: SafeUrl | null = null
-  base64: string = ""
-  blob: Blob | null = null
-  QRId: string = ""
-  expDate: Date | null = null
-  constructor(private http: HttpClient, private sanitizer: DomSanitizer) {
-
-  }
+  files: Array<File> = [];
+  filesDecode: Array<File> = [];
+  apiURL = 'http://localhost:8080';
+  previewSrc: SafeUrl | null = null;
+  base64: string = '';
+  blob: Blob | null = null;
+  QRId: string = '';
+  expDate: Date | null = null;
+  constructor(private http: HttpClient, private sanitizer: DomSanitizer) {}
   onSelectDecode(event: any) {
     if (this.filesDecode && this.files.length >= 2) {
       this.onRemove(this.filesDecode[0]);
@@ -35,22 +40,22 @@ export class AppComponent {
     this.files.push(...event.addedFiles);
   }
   DownloadImage() {
-    let base64: string = ""
-    let split = (this.base64 + "").split(',')
+    let base64: string = '';
+    let split = (this.base64 + '').split(',');
     if (split.length > 1) {
-      base64 = split[1]
+      base64 = split[1];
     } else {
-      base64 = split[0]
+      base64 = split[0];
     }
-    this.blob = this.b64toBlob(base64)
+    this.blob = this.b64toBlob(base64);
     const blobUrl = URL.createObjectURL(this.blob);
 
     // Create a link element
-    const link: any = document.createElement("a");
+    const link: any = document.createElement('a');
 
     // Set link's href to point to the Blob URL
     link.href = blobUrl;
-    link.download = this.QRId
+    link.download = this.QRId;
 
     // Append link to the body
     document.body.appendChild(link);
@@ -61,7 +66,7 @@ export class AppComponent {
       new MouseEvent('click', {
         bubbles: true,
         cancelable: true,
-        view: window
+        view: window,
       })
     );
 
@@ -106,60 +111,75 @@ export class AppComponent {
     this.filesDecode.splice(this.filesDecode.indexOf(event), 1);
   }
   async generateBase64(f: File): Promise<string> {
-    let b64 = await this.toBase64(f)
-    return b64
+    let b64 = await this.toBase64(f);
+    return b64;
   }
   toBase64(f: File): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(f);
       reader.onload = () => resolve(reader.result?.toString() || '');
-      reader.onerror = error => reject(error);
-    })
+      reader.onerror = (error) => reject(error);
+    });
   }
-  isHttpProgressEvent(input: HttpEvent<unknown>): input is HttpUploadProgressEvent {
+  isHttpProgressEvent(
+    input: HttpEvent<unknown>
+  ): input is HttpUploadProgressEvent {
     return input.type === HttpEventType.UploadProgress;
   }
   generateQR() {
-    let file = this.files[0]
+    let file = this.files[0];
     let headers = new HttpHeaders({
       'Content-Type': file.type,
     });
     let options = { headers: headers };
-    this.http.post<QREncodeOutput>(this.apiURL + "/qr/Generate", file, options
-    ).subscribe(r => {
-      this.blob = this.b64toBlob(r.data)
-      let objectURL = window.URL.createObjectURL(this.blob);
-      this.previewSrc = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-      this.QRId = r.id
-      this.expDate = r.expirationDate
-      this.base64 = r.data
-    }, e => {
-      console.log({ e })
-    })
+    this.http
+      .post<QREncodeOutput>(this.apiURL + '/qr/Generate', file, options)
+      .subscribe(
+        (r) => {
+          this.blob = this.b64toBlob(r.data);
+          let objectURL = window.URL.createObjectURL(this.blob);
+          this.previewSrc = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+          this.QRId = r.id;
+          this.expDate = r.expirationDate;
+          this.base64 = r.data;
+        },
+        (e) => {
+          console.log({ e });
+        }
+      );
   }
   async decodeQR() {
-    let file = this.filesDecode[0]
-    this.toBase64(file).then(b64 => {
+    let file = this.filesDecode[0];
+    this.toBase64(file).then((b64) => {
       const options = {
         headers: { 'Content-Type': 'application/json' },
       };
-      this.http.post<QRDecodeOutput>(this.apiURL + "/qr/Decrypt", { "data": b64 }, options
-      ).subscribe((r: QRDecodeOutput) => {
-        console.log({ r })
-        let blob = this.b64toBlob(r.data)
-        let objectURL = URL.createObjectURL(blob);
-        let a: any = document.createElement("a");
-        document.body.appendChild(a);
-        a.style = "display: none";
-        a.href = objectURL;
-        a.download = r.id + mimeTypes.getExtension(r.contentType);
-        a.click();
-        window.URL.revokeObjectURL(objectURL);
-      }, e => {
-        console.log({ e })
-      })
-    })
+      this.http
+        .post<QRDecodeOutput>(
+          this.apiURL + '/qr/Decrypt',
+          { data: b64 },
+          options
+        )
+        .subscribe(
+          (r: QRDecodeOutput) => {
+            console.log({ r });
+            let blob = this.b64toBlob(r.data);
+            let objectURL = URL.createObjectURL(blob);
+            let a: any = document.createElement('a');
+            document.body.appendChild(a);
+            a.style = 'display: none';
+            a.href = objectURL;
+            let ext = mime[r.contentType];
+            console.log(ext);
+            a.download = r.id + mimeTypes.getExtension(r.contentType);
+            a.click();
+            window.URL.revokeObjectURL(objectURL);
+          },
+          (e) => {
+            console.log({ e });
+          }
+        );
+    });
   }
 }
-
