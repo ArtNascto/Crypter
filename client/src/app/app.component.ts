@@ -163,7 +163,6 @@ export class AppComponent {
         )
         .subscribe(
           (r: QRDecodeOutput) => {
-            console.log({ r });
             let blob = this.b64toBlob(r.data);
             let objectURL = URL.createObjectURL(blob);
             let a: any = document.createElement('a');
@@ -171,8 +170,11 @@ export class AppComponent {
             a.style = 'display: none';
             a.href = objectURL;
             let ext = mime[r.contentType];
-            console.log(ext);
-            a.download = r.id + mimeTypes.getExtension(r.contentType);
+            let extension = 'png';
+            if (ext.extensions) {
+              extension = ext.extensions[0];
+            }
+            a.download = r.id + '.' + extension;
             a.click();
             window.URL.revokeObjectURL(objectURL);
           },
