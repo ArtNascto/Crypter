@@ -8,11 +8,11 @@ services:
       - ./qr_public.pem:/app/qr_public.pem
     environment:
       - PostgresPort=5432
-      - PostgresHost="10.10.176.12"
+      - PostgresHost="10.0.0.109"
       - PostgresDBName="postgres"
       - PostgresUser="ADMIN"
       - PostgresPassword="admin_pass"
       - RSAPublicKey="./qr_public.pem"
       - Port="8082"
-      - RedisAddress=10.10.176.12:6379
+      - RedisAddress=10.0.0.109:6379
       - RedisDB=0

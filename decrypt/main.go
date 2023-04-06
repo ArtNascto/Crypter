@@ -76,6 +76,7 @@ func main() {
 	r.GET("/ping", handlers.Ping)
 	r.GET("/debug/statsviz/*filepath", handlers.GetStatus)
 	r.POST("/decrypt", handlers.DecodeQrCode)
+	r.POST("/decrypt_mobile", handlers.DecodeQrCodeMobile)
 	if global.Config.PORT == "" {
 		global.Config.PORT = "8083"
 	}
