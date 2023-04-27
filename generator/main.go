@@ -5,9 +5,11 @@ import (
 	"qr_generator/internal/global"
 	"qr_generator/internal/handlers"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
+	cors "github.com/itsjamie/gin-cors"
 	"github.com/nitishm/go-rejson"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -73,13 +75,21 @@ func init() {
 func main() {
 
 	r := gin.Default()
-
+	r.Use(cors.Middleware(cors.Config{
+		Origins:         "*",
+		Methods:         "GET, PUT, POST, DELETE",
+		RequestHeaders:  "Origin, Authorization, Content-Type,X-Requested-With",
+		ExposedHeaders:  "",
+		MaxAge:          50 * time.Second,
+		ValidateHeaders: false,
+	}))
 	r.GET("/ping", handlers.Ping)
 	r.GET("/debug/statsviz/*filepath", handlers.GetStatus)
 	r.POST("/generate", handlers.EncryptQrCode)
 	if global.Config.PORT == "" {
 		global.Config.PORT = "8082"
 	}
+
 	r.Run(":" + global.Config.PORT)
 }
 func ReadConfFromRuntime() {

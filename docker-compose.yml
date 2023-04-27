@@ -15,53 +15,53 @@ services:
     ports:
       - 6379:6379  
       - 8001:8001
-  decrypt:
-    restart: always
-    build: decrypt
-    ports:
-      - 8083:8083
-    depends_on:
-      - postgres
-      - redis
-    volumes:
-      - ./decrypt/qr_private.key:/app/qr_private.key
-    environment:
-      - PostgresPort=5432
-      - PostgresHost=10.0.0.109
-      - PostgresDBName=postgres
-      - PostgresUser=ADMIN
-      - PostgresPassword=admin_pass
-      - RSAPublicKey=./qr_public.pem
-      - RSAPrivateKey=./qr_private.key
-      - Port=8083
-      - QRDecoder=http://10.0.0.109:8080/qr/GetQrCode
-      - RedisAddress=10.0.0.109:6379
-      - RedisDB=0
-  scanner:
-    build: scanner
-    restart: always
-    ports:
-      - 5000:5000
-  generator:
-    restart: always
-    build: generator
-    ports:
-      - 8082:8082
-    volumes:
-      - ./generator/qr_public.pem:/app/qr_public.pem
-    environment:
-      - PostgresPort=5432
-      - PostgresHost=10.0.0.109
-      - PostgresDBName=postgres
-      - PostgresUser=ADMIN
-      - PostgresPassword=admin_pass
-      - RSAPublicKey=./qr_public.pem
-      - Port=8082
-      - RedisAddress=10.0.0.109:6379
-      - RedisDB=0
-    depends_on:
-      - postgres
-      - redis
+  # decrypt:
+  #   restart: always
+  #   build: decrypt
+  #   ports:
+  #     - 8083:8083
+  #   depends_on:
+  #     - postgres
+  #     - redis
+  #   volumes:
+  #     - ./decrypt/qr_private.key:/app/qr_private.key
+  #   environment:
+  #     - PostgresPort=5432
+  #     - PostgresHost=10.0.0.109
+  #     - PostgresDBName=postgres
+  #     - PostgresUser=ADMIN
+  #     - PostgresPassword=admin_pass
+  #     - RSAPublicKey=./qr_public.pem
+  #     - RSAPrivateKey=./qr_private.key
+  #     - Port=8083
+  #     - QRDecoder=http://10.0.0.109:8080/qr/GetQrCode
+  #     - RedisAddress=10.0.0.109:6379
+  #     - RedisDB=0
+  # scanner:
+  #   build: scanner
+  #   restart: always
+  #   ports:
+  #     - 5000:5000
+  # generator:
+  #   restart: always
+  #   build: generator
+  #   ports:
+  #     - 8082:8082
+  #   volumes:
+  #     - ./generator/qr_public.pem:/app/qr_public.pem
+  #   environment:
+  #     - PostgresPort=5432
+  #     - PostgresHost=10.0.0.109
+  #     - PostgresDBName=postgres
+  #     - PostgresUser=ADMIN
+  #     - PostgresPassword=admin_pass
+  #     - RSAPublicKey=./qr_public.pem
+  #     - Port=8082
+  #     - RedisAddress=10.0.0.109:6379
+  #     - RedisDB=0
+  #   depends_on:
+  #     - postgres
+  #     - redis
   # client:
   #   build: client
   #   restart: always
@@ -76,90 +76,90 @@ services:
   #     - generator
   #     - scanner
   #     - decrypt
-  krakend_ce:
-    restart: always
-    image: devopsfaith/krakend:watch
-    volumes:
-      - ./gateway/config/krakend:/etc/krakend
-    ports:
-      - "1234:1234"
-      - "8080:8080"
-      - "8090:8090"
-      - "9091:9091"
-    command: ["run", "-d", "-c", "/etc/krakend/krakend.json"]
-    depends_on:
-      - jaeger
-      - elasticsearch
-      - influxdb
-      - kibana
-      - logstash
-      - rabbitmq
+  # krakend_ce:
+  #   restart: always
+  #   image: devopsfaith/krakend:watch
+  #   volumes:
+  #     - ./gateway/config/krakend:/etc/krakend
+  #   ports:
+  #     - "1234:1234"
+  #     - "8080:8080"
+  #     - "8090:8090"
+  #     - "9091:9091"
+  #   command: ["run", "-d", "-c", "/etc/krakend/krakend.json"]
+  #   depends_on:
+  #     - jaeger
+  #     - elasticsearch
+  #     - influxdb
+  #     - kibana
+  #     - logstash
+  #     - rabbitmq
 
-  grafana:
-    restart: always
-    image: grafana/grafana:9.1.2
-    ports:
-      - "4000:3000"
-    volumes:
-      - "./gateway/config/grafana/datasources/all.yml:/etc/grafana/provisioning/datasources/all.yml"
-      - "./gateway/config/grafana/dashboards/all.yml:/etc/grafana/provisioning/dashboards/all.yml"
-      - "./gateway/config/grafana/krakend:/var/lib/grafana/dashboards/krakend"
-    depends_on:
-      - elasticsearch
-      - influxdb
-      - krakend_ce
-      - jaeger
-      - rabbitmq
-  influxdb:
-    restart: always
-    image: influxdb:1.8.10
-    environment:
-      - "INFLUXDB_DB=krakend"
-      - "INFLUXDB_USER=krakend-dev"
-      - "INFLUXDB_USER_PASSWORD=pas5w0rd"
-      - "INFLUXDB_ADMIN_USER=admin"
-      - "INFLUXDB_ADMIN_PASSWORD=supersecretpassword"
-    ports:
-      - "8086:8086"
-  jaeger:
-    restart: always
-    image: jaegertracing/all-in-one:1
-    ports:
-      - "16686:16686"
-      - "14268:14268"
-  elasticsearch:
-    restart: always
-    image: elasticsearch:8.4.1
-    environment:
-      - "discovery.type=single-node"
-      - "xpack.security.enabled=false"
-      - "xpack.security.transport.ssl.enabled=false"
-      - "xpack.security.http.ssl.enabled=false"
-    ports:
-      - "19200:9200"
-      - "9300:9300"
-  kibana:
-    restart: always
-    image: kibana:8.4.1
-    ports:
-      - "5601:5601"
-    depends_on:
-      - elasticsearch
-  logstash:
-    restart: always
-    image: logstash:8.4.1
-    ports:
-      - "12201:12201/udp"
-      - "5044:5044"
-    environment:
-      - "xpack.monitoring.elasticsearch.url=http://elasticsearch:9200"
-    volumes:
-      - ./gateway/config/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-    command: ["-f", "/usr/share/logstash/pipeline/logstash.conf"]
-    depends_on:
-      - elasticsearch
-  rabbitmq:
-    restart: always
-    image: rabbitmq:3-management
-    ports:
-      - "15672:15672"
+  # grafana:
+  #   restart: always
+  #   image: grafana/grafana:9.1.2
+  #   ports:
+  #     - "4000:3000"
+  #   volumes:
+  #     - "./gateway/config/grafana/datasources/all.yml:/etc/grafana/provisioning/datasources/all.yml"
+  #     - "./gateway/config/grafana/dashboards/all.yml:/etc/grafana/provisioning/dashboards/all.yml"
+  #     - "./gateway/config/grafana/krakend:/var/lib/grafana/dashboards/krakend"
+  #   depends_on:
+  #     - elasticsearch
+  #     - influxdb
+  #     - krakend_ce
+  #     - jaeger
+  #     - rabbitmq
+  # influxdb:
+  #   restart: always
+  #   image: influxdb:1.8.10
+  #   environment:
+  #     - "INFLUXDB_DB=krakend"
+  #     - "INFLUXDB_USER=krakend-dev"
+  #     - "INFLUXDB_USER_PASSWORD=pas5w0rd"
+  #     - "INFLUXDB_ADMIN_USER=admin"
+  #     - "INFLUXDB_ADMIN_PASSWORD=supersecretpassword"
+  #   ports:
+  #     - "8086:8086"
+  # jaeger:
+  #   restart: always
+  #   image: jaegertracing/all-in-one:1
+  #   ports:
+  #     - "16686:16686"
+  #     - "14268:14268"
+  # elasticsearch:
+  #   restart: always
+  #   image: elasticsearch:8.4.1
+  #   environment:
+  #     - "discovery.type=single-node"
+  #     - "xpack.security.enabled=false"
+  #     - "xpack.security.transport.ssl.enabled=false"
+  #     - "xpack.security.http.ssl.enabled=false"
+  #   ports:
+  #     - "19200:9200"
+  #     - "9300:9300"
+  # kibana:
+  #   restart: always
+  #   image: kibana:8.4.1
+  #   ports:
+  #     - "5601:5601"
+  #   depends_on:
+  #     - elasticsearch
+  # logstash:
+  #   restart: always
+  #   image: logstash:8.4.1
+  #   ports:
+  #     - "12201:12201/udp"
+  #     - "5044:5044"
+  #   environment:
+  #     - "xpack.monitoring.elasticsearch.url=http://elasticsearch:9200"
+  #   volumes:
+  #     - ./gateway/config/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+  #   command: ["-f", "/usr/share/logstash/pipeline/logstash.conf"]
+  #   depends_on:
+  #     - elasticsearch
+  # rabbitmq:
+  #   restart: always
+  #   image: rabbitmq:3-management
+  #   ports:
+  #     - "15672:15672"

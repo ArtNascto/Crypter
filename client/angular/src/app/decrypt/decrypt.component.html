@@ -1,0 +1,23 @@
+<div class="container p-5">
+  <ngx-dropzone (change)="onSelectDecode($event)" [multiple]="false">
+    <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+      Drag and drop or
+      <button class="p-1 btn btn-link" type="button" (click)="openFileSelector()">
+        Browse Files
+      </button>
+    </ng-template>
+    <ngx-dropzone-label>Insira um arquivo</ngx-dropzone-label>
+    <ngx-dropzone-preview
+      *ngFor="let f of filesDecode"
+      [removable]="true"
+      (removed)="onRemoveDecode(f)"
+    >
+      <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+    </ngx-dropzone-preview>
+  </ngx-dropzone>
+</div>
+<div class="d-flex align-content-start justify-content-start mt-5">
+  <button class="btn btn-primary" (click)="decodeQR()" [disabled]="filesDecode.length <= 0">
+    {{ '::Decrypt' | abpLocalization }}
+  </button>
+</div>
