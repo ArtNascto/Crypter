@@ -17,6 +17,10 @@ const routes: Routes = [
     loadChildren: () => import('./decrypt/decrypt.module').then(m => m.DecryptModule),
   },
   {
+    path: 'scan-camera',
+    loadChildren: () => import('./scan-camera/scan-camera.module').then(m => m.ScanCameraModule),
+  },
+  {
     path: 'identity',
     loadChildren: () => import('@abp/ng.identity').then(m => m.IdentityModule.forLazy()),
   },

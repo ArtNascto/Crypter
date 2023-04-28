@@ -7,6 +7,9 @@
     "Menu:Generate": "Generate QR Code",
     "Menu:Decrypt": "Decrypt QR Code",
     "Decrypt": "Decrypt",
-    "ScanCamera": "Scan QR Code"
+    "Menu:ScanCamera": "Scan QR Code",
+    "ScanCamera": "Scan QR Code",
+    "SwitchCamera": "Switch Camera"
+
   }
 }

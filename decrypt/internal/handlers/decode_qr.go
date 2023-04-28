@@ -165,8 +165,7 @@ func DecodeQrCode(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{"result": r})
 		}
 	} else {
-		c.JSON(http.StatusNotFound, gin.H{})
-
+		c.JSON(http.StatusNotFound, gin.H{"error": "QR not found on image, please try again"})
 	}
 }
 func removeContent(id string) error {

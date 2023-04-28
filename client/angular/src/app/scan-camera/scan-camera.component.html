@@ -1,1 +1,23 @@
-<p>scan-camera works!</p>
+<!--video and canvas tags have local variable so they can be accessed by typescript-->
+<div id="app" class="container p-sm-5">
+  <div class="d-flex flex-column justify-content-center align-content-center align-items-center">
+    <webcam
+      [trigger]="triggerObservable"
+      (imageCapture)="handleImage($event)"
+      [allowCameraSwitch]="allowCameraSwitch"
+      [switchCamera]="nextWebcamObservable"
+      [videoOptions]="videoOptions"
+      (cameraSwitched)="cameraWasSwitched($event)"
+      (initError)="handleInitError($event)"
+      #webcam
+    ></webcam>
+  </div>
+  <div class="d-flex flex-row justify-content-center align-content-center align-items-center">
+    <button id="snap" class="btn btn-info mt-2" (click)="triggerSnapshot()">
+      {{ '::Decrypt' | abpLocalization }}
+    </button>
+    <button id="snap" class="btn btn-info mt-2 ms-2" (click)="showNextWebcam(true)">
+      {{ '::SwitchCamera' | abpLocalization }}<i class="fa-solid fa-camera-rotate"></i>
+    </button>
+  </div>
+</div>

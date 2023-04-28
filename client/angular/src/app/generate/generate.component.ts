@@ -114,7 +114,6 @@ export class GenerateComponent {
     return input.type === HttpEventType.UploadProgress;
   }
   generateQR() {
-    console.log({environment})
     let file = this.files[0];
     let headers = new HttpHeaders({
       'Content-Type': file.type,
@@ -124,6 +123,8 @@ export class GenerateComponent {
       .post<QREncodeOutput>(environment.apis.qr.encrypt + '/generate', file, options)
       .subscribe(
         r => {
+          this.blob = this.b64toBlob(r.data);
+          console.log(r);
           let objectURL = window.URL.createObjectURL(this.blob);
           this.previewSrc = this.sanitizer.bypassSecurityTrustUrl(objectURL);
           this.QRId = r.id;

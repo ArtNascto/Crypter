@@ -1,9 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { QRDecodeOutput } from './qr-decode-output';
 import { environment } from 'src/environments/environment';
 import * as mime from 'mime-db';
+import { PageAlertService, ToasterService } from '@abp/ng.theme.shared';
 
 @Component({
   selector: 'app-decrypt',
@@ -11,7 +12,11 @@ import * as mime from 'mime-db';
   styleUrls: ['./decrypt.component.scss'],
 })
 export class DecryptComponent {
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private service: PageAlertService,
+    private toaster: ToasterService
+  ) {}
 
   filesDecode: Array<File> = [];
   onSelectDecode(event: any) {
@@ -57,7 +62,7 @@ export class DecryptComponent {
         headers: { 'Content-Type': 'application/json' },
       };
       this.http
-        .post<QRDecodeOutput>(environment.apis.qr.decrypt + '/qr/Decrypt', { data: b64 }, options)
+        .post<QRDecodeOutput>(environment.apis.qr.decrypt + '/decrypt', { data: b64 }, options)
         .subscribe(
           (r: QRDecodeOutput) => {
             let blob = this.b64toBlob(r.data);
@@ -74,9 +79,10 @@ export class DecryptComponent {
             a.download = r.id + '.' + extension;
             a.click();
             window.URL.revokeObjectURL(objectURL);
+            this.toaster.success('Seu arquivo foi baixado!');
           },
-          e => {
-            console.log({ e });
+          (e: HttpErrorResponse) => {
+            this.toaster.error(e.error.error);
           }
         );
     });
