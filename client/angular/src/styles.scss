@@ -9,10 +9,24 @@
   }
 }
 :root {
-  --lpx-logo: url('/assets/images/logo/logo-light.png');
-  --lpx-logo-icon: url('/assets/images/logo/logo-light-thumbnail.png');
+  --lpx-logo: url('/assets/images/logo/logo-light.svg');
+  --lpx-logo-icon: url('/assets/images/logo/logo-light-thumbnail.svg');
   --lpx-brand: #30d9ba;
 }
+@media only screen and (min-width: 1201px) {
+  :root .lpx-brand-logo {
+    background-image: var(--lpx-logo);
+    background-repeat: no-repeat;
+    background-size: auto 45px;
+    background-position: left -1px;
+    height: 45px;
+  }
+  .lpx-nav-menu {
+    padding-top: 45px !important;
+  }
+}
+
+
 .donut {
   display: inline-block;
   border: 4px solid rgba(0, 0, 0, 0.1);
