@@ -165,8 +165,7 @@ public class ClientHttpApiHostModule : AbpModule
                     .WithAbpExposedHeaders()
                     // .SetIsOriginAllowedToAllowWildcardSubdomains()
                     .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials();
+                    .AllowAnyMethod();
             });
         });
     }
