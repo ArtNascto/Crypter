@@ -24,7 +24,7 @@ export class GenerateComponent {
   expDate: Date | null = null;
   constructor(private http: HttpClient, private sanitizer: DomSanitizer) {}
   onSelect(event: any) {
-    if (this.files && this.files.length >= 2) {
+    if (this.files && this.files.length >= 1) {
       this.onRemove(this.files[0]);
     }
     this.files.push(...event.addedFiles);
@@ -124,7 +124,6 @@ export class GenerateComponent {
       .subscribe(
         r => {
           this.blob = this.b64toBlob(r.data);
-          console.log(r);
           let objectURL = window.URL.createObjectURL(this.blob);
           this.previewSrc = this.sanitizer.bypassSecurityTrustUrl(objectURL);
           this.QRId = r.id;

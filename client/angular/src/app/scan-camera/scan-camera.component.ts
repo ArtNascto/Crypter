@@ -1,66 +1,36 @@
+import { ToasterService } from '@abp/ng.theme.shared';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  EventEmitter,
-  Output,
-  ViewChild,
-} from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import { Component } from '@angular/core';
+import { WebcamImage } from 'ngx-webcam';
+import { Subject, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import * as mime from 'mime-db';
 import { QRDecodeOutput } from '../decrypt/qr-decode-output';
-import { PageAlertService, ToasterService } from '@abp/ng.theme.shared';
-import { WebcamComponent, WebcamImage, WebcamInitError } from 'ngx-webcam';
-import { Observable, Subject } from 'rxjs';
-
+import * as mime from 'mime-db';
 @Component({
   selector: 'app-scan-camera',
   templateUrl: './scan-camera.component.html',
   styleUrls: ['./scan-camera.component.scss'],
 })
-export class ScanCameraComponent implements AfterViewInit {
-  enabled: boolean = false;
-  public captures: Array<any>;
-  @ViewChild('webcam', { static: true }) //variable from html
-  public webcam: WebcamComponent;
-  @Output()
-  public pictureTaken = new EventEmitter<WebcamImage>();
-  // toggle webcam on/off
-  public showWebcam = true;
-  public allowCameraSwitch = true;
-  public multipleWebcamsAvailable = false;
-  public deviceId: string;
-  public videoOptions: MediaTrackConstraints = {
-    width: { ideal: 1024 },
-    height: { ideal: 576 },
-  };
-  supported: any = null;
-  private trigger: Subject<void> = new Subject<void>();
-  // switch to next / previous / specific webcam; true/false: forward/backwards, string: deviceId
-  private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
-  constructor(
-    private http: HttpClient,
-    private service: PageAlertService,
-    private toaster: ToasterService
-  ) {
-    this.captures = [];
-    this.supported = 'mediaDevices' in navigator;
-    console.log({ supported: this.supported });
-    navigator.mediaDevices?.getUserMedia({ video: true });
-    if ('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices) {
-      console.log("Let's get this party started");
-    }
-    this.supported = 'mediaDevices' in navigator;
-    console.log({ supported: this.supported });
+export class ScanCameraComponent {
+  private trigger: Subject<void> = new Subject();
+  public webcamImage!: WebcamImage;
+  private nextWebcam: Subject<void> = new Subject();
+  sysImage = '';
+  constructor(private http: HttpClient, private toaster: ToasterService) {}
+  public getSnapshot(): void {
+    this.trigger.next(void 0);
   }
-
-  ngAfterViewInit() {
-    this.webcam.nativeVideoElement.style = 'width: 100% !important;height: 100% !important;';
+  public captureImg(webcamImage: WebcamImage): void {
+    this.webcamImage = webcamImage;
+    this.sysImage = webcamImage!.imageAsDataUrl;
+    this.decrypt(this.sysImage.replace("data:image/jpg","data:image/png").replace("data:image/jpeg","data:image/png"));
   }
-
-  //capture an image and add it to the captures array.
+  public get invokeObservable(): Observable<any> {
+    return this.trigger.asObservable();
+  }
+  public get nextWebcamObservable(): Observable<any> {
+    return this.nextWebcam.asObservable();
+  }
   b64toBlob(b64Data: string, sliceSize = 512): Blob {
     const byteCharacters = atob(b64Data);
     const byteArrays = [];
@@ -116,33 +86,5 @@ export class ScanCameraComponent implements AfterViewInit {
           this.toaster.error(e.error.error);
         }
       );
-  }
-  public triggerSnapshot(): void {
-    this.trigger.next();
-  }
-  public toggleWebcam(): void {
-    this.showWebcam = !this.showWebcam;
-  }
-  public handleInitError(error: WebcamInitError): void {}
-  public showNextWebcam(directionOrDeviceId: boolean | string): void {
-    // true => move forward through devices
-    // false => move backwards through devices
-    // string => move to device with given deviceId
-    this.nextWebcam.next(directionOrDeviceId);
-  }
-  public handleImage(webcamImage: WebcamImage): void {
-    this.decrypt(webcamImage.imageAsBase64);
-    console.info('received webcam image', { webcamImage });
-    this.pictureTaken.emit(webcamImage);
-  }
-  public cameraWasSwitched(deviceId: string): void {
-    console.log('active device: ' + deviceId);
-    this.deviceId = deviceId;
-  }
-  public get triggerObservable(): Observable<void> {
-    return this.trigger.asObservable();
-  }
-  public get nextWebcamObservable(): Observable<boolean | string> {
-    return this.nextWebcam.asObservable();
   }
 }

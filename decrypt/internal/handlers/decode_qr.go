@@ -126,9 +126,13 @@ func DecodeQrCode(c *gin.Context) {
 		}
 
 		res, err := global.RH.JSONGet(data.ID, ".")
-		if err != nil {
+		if err != nil && err.Error() != "redis: nil" {
 			global.Log.Error(err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		} else if err != nil && err.Error() == "redis: nil" {
+			global.Log.Error(err)
+			c.JSON(http.StatusNotFound, gin.H{"error": "data not found"})
 			return
 		}
 		var objOut dtos.Data
