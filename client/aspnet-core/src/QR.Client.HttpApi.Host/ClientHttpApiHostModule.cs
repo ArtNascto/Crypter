@@ -157,12 +157,13 @@ public class ClientHttpApiHostModule : AbpModule
             options.AddDefaultPolicy(builder =>
             {
                 builder
-                    .WithOrigins(configuration["App:CorsOrigins"]?
-                        .Split(",", StringSplitOptions.RemoveEmptyEntries)
-                        .Select(o => o.RemovePostFix("/"))
-                        .ToArray() ?? Array.Empty<string>())
+                    // .WithOrigins(configuration["App:CorsOrigins"]?
+                    //     .Split(",", StringSplitOptions.RemoveEmptyEntries)
+                    //     .Select(o => o.RemovePostFix("/"))
+                    //     .ToArray() ?? Array.Empty<string>())
+                    .AllowAnyOrigin()
                     .WithAbpExposedHeaders()
-                    .SetIsOriginAllowedToAllowWildcardSubdomains()
+                    // .SetIsOriginAllowedToAllowWildcardSubdomains()
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials();

@@ -36,6 +36,7 @@ export class ScanCameraComponent implements AfterViewInit {
     width: { ideal: 1024 },
     height: { ideal: 576 },
   };
+  supported: any = null;
   private trigger: Subject<void> = new Subject<void>();
   // switch to next / previous / specific webcam; true/false: forward/backwards, string: deviceId
   private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
@@ -45,6 +46,14 @@ export class ScanCameraComponent implements AfterViewInit {
     private toaster: ToasterService
   ) {
     this.captures = [];
+    this.supported = 'mediaDevices' in navigator;
+    console.log({ supported: this.supported });
+    navigator.mediaDevices?.getUserMedia({ video: true });
+    if ('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices) {
+      console.log("Let's get this party started");
+    }
+    this.supported = 'mediaDevices' in navigator;
+    console.log({ supported: this.supported });
   }
 
   ngAfterViewInit() {

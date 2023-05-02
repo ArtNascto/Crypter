@@ -11,6 +11,8 @@
       (initError)="handleInitError($event)"
       #webcam
     ></webcam>
+    <input type="file" accept="image/*" capture="environment">
+    {{supported}}
   </div>
   <div class="d-flex flex-row justify-content-center align-content-center align-items-center">
     <button id="snap" class="btn btn-info mt-2" (click)="triggerSnapshot()">

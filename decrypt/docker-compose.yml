@@ -8,13 +8,13 @@ services:
       - ./qr_private.key:/app/qr_private.key
     environment:
       - PostgresPort="5432"
-      - PostgresHost="10.0.0.109"
+      - PostgresHost="20.119.71.68"
       - PostgresDBName="postgres"
       - PostgresUser="ADMIN"
       - PostgresPassword="admin_pass"
       - RSAPublicKey="./qr_public.pem"
       - RSAPrivateKey="./qr_private.key"
       - Port="8083"
-      - QRDecoder="http://10.0.0.109:8080/qr/GetQrCode"
-      - RedisAddress=10.0.0.109:6379
+      - QRDecoder="http://20.119.71.68:8080/qr/GetQrCode"
+      - RedisAddress=20.119.71.68:6379
       - RedisDB=0

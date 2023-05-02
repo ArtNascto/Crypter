@@ -3,7 +3,7 @@
   "version": 3,
   "name": "KrakenD API Gateway",
   "port": 8080,
-  "host": ["http://10.0.0.109:8080"],
+  "host": ["http://20.119.71.68:8080"],
   "timeout": "3000ms",
   "cache_ttl": "300s",
   "endpoints": [
@@ -17,7 +17,7 @@
           "encoding": "json",
           "sd": "static",
           "method": "POST",
-          "host": ["http://10.0.0.109:8082"],
+          "host": ["http://20.119.71.68:8082"],
           "disable_host_sanitize": true,
           "extra_config": {
             "qos/http-cache": {
@@ -48,7 +48,7 @@
           "encoding": "json",
           "sd": "static",
           "method": "POST",
-          "host": ["http://10.0.0.109:5000"],
+          "host": ["http://20.119.71.68:5000"],
           "disable_host_sanitize": false,
           "extra_config": {
             "qos/http-cache": {
@@ -80,7 +80,7 @@
           "encoding": "no-op",
           "sd": "static",
           "method": "POST",
-          "host": ["http://10.0.0.109:8083"],
+          "host": ["http://20.119.71.68:8083"],
           "extra_config": {
             "qos/http-cache": {
               "shared": true
@@ -111,7 +111,7 @@
           "encoding": "no-op",
           "sd": "static",
           "method": "POST",
-          "host": ["http://10.0.0.109:8083"],
+          "host": ["http://20.119.71.68:8083"],
           "extra_config": {
             "qos/http-cache": {
               "shared": true
