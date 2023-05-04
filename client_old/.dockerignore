@@ -1,7 +1,0 @@
-node_modules
-.angular
-.vscode
-docker-compose.*
-Dockerfile*
-package-lock.json
-yarn-lock.json
