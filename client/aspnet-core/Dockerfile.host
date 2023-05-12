@@ -1,0 +1,9 @@
+FROM alpine:3.18.0
+WORKDIR /app
+COPY . .
+RUN apk add  --no-cache dotnet7-sdk
+RUN dotnet restore
+WORKDIR /app/src/QR.Client.HttpApi.Host
+EXPOSE 44318
+
+ENTRYPOINT ["dotnet", "run"]

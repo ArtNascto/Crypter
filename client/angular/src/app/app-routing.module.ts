@@ -2,14 +2,13 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  // {
-  //   path: '',
-  //   pathMatch: 'full',
-  //   loadChildren: () => import('./home/home.module').then(m => m.HomeModule),
-  // },
   {
     path: '',
     pathMatch: 'full',
+    loadChildren: () => import('./generate/generate.module').then(m => m.GenerateModule),
+  },
+  {
+    path: '**',
     loadChildren: () => import('./generate/generate.module').then(m => m.GenerateModule),
   },
   {

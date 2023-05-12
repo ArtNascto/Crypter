@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "https://localhost:44318",
+      "applicationUrl": "https://10.0.0.4:44318",
       "sslPort": 44318
     }
   },
@@ -18,7 +18,7 @@
     "QR.Client.HttpApi.Host": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:44318",
+      "applicationUrl": "https://10.0.0.4:44318",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

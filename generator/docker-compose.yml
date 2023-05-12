@@ -2,17 +2,18 @@ version: "3"
 services:
   generator:
     build: .
+    restart: always
     ports:
       - 8082:8082
     volumes:
       - ./qr_public.pem:/app/qr_public.pem
     environment:
       - PostgresPort=5432
-      - PostgresHost="20.119.71.68"
-      - PostgresDBName="postgres"
-      - PostgresUser="ADMIN"
-      - PostgresPassword="admin_pass"
-      - RSAPublicKey="./qr_public.pem"
-      - Port="8082"
-      - RedisAddress=20.119.71.68:6379
+      - PostgresHost=10.0.0.4
+      - PostgresDBName=postgres
+      - PostgresUser=ADMIN
+      - PostgresPassword=admin_pass
+      - RSAPublicKey=./qr_public.pem
+      - Port=8082
+      - RedisAddress=10.0.0.4:6379
       - RedisDB=0

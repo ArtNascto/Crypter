@@ -10,7 +10,7 @@
     <ngx-dropzone-preview
       *ngFor="let f of filesDecode"
       [removable]="true"
-      (removed)="onRemoveDecode(f)"
+      (removed)="onRemove(f)"
     >
       <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
     </ngx-dropzone-preview>

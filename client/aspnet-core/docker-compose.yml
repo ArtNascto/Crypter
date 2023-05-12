@@ -1,0 +1,14 @@
+services:
+  migrator:
+    build:
+      context: .
+      dockerfile: Dockerfile.migrator
+  host:
+    build:
+      context: .
+      dockerfile: Dockerfile.host
+    ports:
+      - 44318:44318
+    depends_on:
+      migrator:
+        condition: service_completed_successfully
