@@ -1,0 +1,58 @@
+name: Build and publish manually
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v2
+      - name: Build image
+        run:
+          docker build -t kreati/crypter/client/ui -f client/angular/Dockerfile client/angular
+          docker build -t kreati/crypter/client/api -f client/aspnet-core/Dockerfile.host client/aspnet-core
+          docker build -t kreati/crypter/client/migrator -f client/aspnet-core/Dockerfile.migrator client/aspnet-core
+          docker build -t kreati/crypter/decrypter -f client/decrypt/Dockerfile client/decrypt
+          docker build -t kreati/crypter/generator -f client/generator/Dockerfile client/generator
+          docker build -t kreati/crypter/scanner -f client/scanner/Dockerfile client/scanner
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Log in to DO Container Registry
+        run: doctl registry login --expiry-seconds 600
+      - name: Tag image ID
+        run:
+          docker tag kreati/crypter/client/ui registry.digitalocean.com/kreati/crypter/client/ui:${{github.run_id }}
+          docker tag kreati/crypter/client/api registry.digitalocean.com/kreati/crypter/client/api:${{github.run_id }}
+          docker tag kreati/crypter/client/migrator registry.digitalocean.com/kreati/crypter/client/migrator:${{github.run_id }}
+          docker tag kreati/crypter/decrypter registry.digitalocean.com/kreati/crypter/decrypter:${{github.run_id }}
+          docker tag kreati/crypter/generator registry.digitalocean.com/kreati/crypter/generator:${{github.run_id }}
+          docker tag kreati/crypter/scanner registry.digitalocean.com/kreati/crypter/scanner:${{github.run_id }}
+      - name: Tag image Latest
+        run:
+          docker tag kreati/crypter/client/ui registry.digitalocean.com/kreati/crypter/client/ui:latest
+          docker tag kreati/crypter/client/api registry.digitalocean.com/kreati/crypter/client/api:latest
+          docker tag kreati/crypter/client/migrator registry.digitalocean.com/kreati/crypter/client/migrator:latest
+          docker tag kreati/crypter/decrypter registry.digitalocean.com/kreati/crypter/decrypter:latest
+          docker tag kreati/crypter/generator registry.digitalocean.com/kreati/crypter/generator:latest
+          docker tag kreati/crypter/scanner registry.digitalocean.com/kreati/crypter/scanner:latest
+      - name: Push image to DO Container Registry ID
+        run:
+          docker push registry.digitalocean.com/kreati/crypter/client/ui:${{github.run_id }}
+          docker push registry.digitalocean.com/kreati/crypter/client/api:${{github.run_id }}
+          docker push registry.digitalocean.com/kreati/crypter/client/migrator:${{github.run_id }}
+          docker push registry.digitalocean.com/kreati/crypter/decrypter:${{github.run_id }}
+          docker push registry.digitalocean.com/kreati/crypter/generator:${{github.run_id }}
+          docker push registry.digitalocean.com/kreati/crypter/scanner:${{github.run_id }}
+      - name: Push image to DO Container Registry latest
+        run:
+          docker push registry.digitalocean.com/kreati/crypter/client/ui:latest
+          docker push registry.digitalocean.com/kreati/crypter/client/api:latest
+          docker push registry.digitalocean.com/kreati/crypter/client/migrator:latest
+          docker push registry.digitalocean.com/kreati/crypter/decrypter:latest
+          docker push registry.digitalocean.com/kreati/crypter/generator:latest
+          docker push registry.digitalocean.com/kreati/crypter/scanner:latest
