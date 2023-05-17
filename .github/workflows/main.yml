@@ -15,9 +15,9 @@ jobs:
           docker build -t kreati/crypter/client/ui -f client/angular/Dockerfile client/angular
           docker build -t kreati/crypter/client/api -f client/aspnet-core/Dockerfile.host client/aspnet-core
           docker build -t kreati/crypter/client/migrator -f client/aspnet-core/Dockerfile.migrator client/aspnet-core
-          docker build -t kreati/crypter/decrypter -f client/decrypt/Dockerfile client/decrypt
-          docker build -t kreati/crypter/generator -f client/generator/Dockerfile client/generator
-          docker build -t kreati/crypter/scanner -f client/scanner/Dockerfile client/scanner
+          docker build -t kreati/crypter/decrypter -f client/decrypt/Dockerfile decrypt
+          docker build -t kreati/crypter/generator -f client/generator/Dockerfile generator
+          docker build -t kreati/crypter/scanner -f client/scanner/Dockerfile scanner
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
