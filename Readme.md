@@ -1,0 +1,1 @@
+# Crypter [![Build and publish manually](https://github.com/ArtNascto/Crypter/actions/workflows/main.yml/badge.svg)](https://github.com/ArtNascto/Crypter/actions/workflows/main.yml)
