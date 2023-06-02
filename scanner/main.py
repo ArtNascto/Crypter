@@ -7,22 +7,28 @@ import numpy as np
 import cv2
 import base64
 from pyzbar.pyzbar import decode, ZBarSymbol
+from qrdet import QRDetector
 
 app = FlaskAPI(__name__)
 app.logger.setLevel(logging.DEBUG)
 
 
 def processQr(img):
+    detector = QRDetector()
     qrValues = []
-    for d in decode(img, symbols=[ZBarSymbol.QRCODE]):
-        x, y, w, h = d.rect
-        roi = img[y:y+h, x:x+w]
-        cropedBase64 = ""
-        if len(cv2.imencode('.jpg', roi)) > 0:
-            cropedBase64 = base64.b64encode(
-                cv2.imencode('.jpg', roi)[1]).decode()
-        result = {"croped": cropedBase64, "data": d.data.decode()}
-        qrValues.append(result)
+    detections = detector.detect(image=img, is_bgr=True)
+    for (x1, y1, x2, y2), confidence in detections:
+        crop_img = img[y1:y2, x1:x2]
+        for d in decode(crop_img, symbols=[ZBarSymbol.QRCODE]):
+            x, y, w, h = d.rect
+            roi = img[y:y+h, x:x+w]
+            cropedBase64 = ""
+            if len(cv2.imencode('.jpg', roi)) > 0:
+                cropedBase64 = base64.b64encode(
+                    cv2.imencode('.jpg', roi)[1]).decode()
+            result = {"croped": cropedBase64,
+                      "data": d.data.decode(), "confidence": confidence}
+            qrValues.append(result)
     return {"values": qrValues}
 
 

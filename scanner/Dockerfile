@@ -13,6 +13,7 @@ RUN pip install gevent
 RUN pip install WSGIServer
 RUN pip install Flask-API
 RUN pip install opencv-python
+RUN pip install qrdet
 COPY . .
 
 CMD [ "python3", "/app/main.py"]
