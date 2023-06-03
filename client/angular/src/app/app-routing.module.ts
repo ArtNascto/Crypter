@@ -8,10 +8,6 @@ const routes: Routes = [
     loadChildren: () => import('./generate/generate.module').then(m => m.GenerateModule),
   },
   {
-    path: '**',
-    loadChildren: () => import('./generate/generate.module').then(m => m.GenerateModule),
-  },
-  {
     path: 'decrypt',
     loadChildren: () => import('./decrypt/decrypt.module').then(m => m.DecryptModule),
   },

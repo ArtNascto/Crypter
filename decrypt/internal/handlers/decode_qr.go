@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"mime"
 	"net/http"
 	"time"
 
@@ -151,7 +152,17 @@ func DecodeQrCode(c *gin.Context) {
 				return
 			}
 			str := base64.StdEncoding.EncodeToString(dataConcat)
-			c.JSON(http.StatusOK, gin.H{"data": str, "contentType": data.DataType, "id": data.ID})
+			extension := ".png"
+			ext, err := mime.ExtensionsByType(data.DataType)
+			if err != nil {
+				global.Log.Error(err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+			if len(ext) > 0 {
+				extension = ext[0]
+			}
+			c.JSON(http.StatusOK, gin.H{"data": str, "contentType": data.DataType, "id": data.ID, "fileName": data.ID + extension})
 		} else {
 			var r map[string]interface{}
 			err = json.Unmarshal(dataConcat, &r)
@@ -166,7 +177,7 @@ func DecodeQrCode(c *gin.Context) {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
-			c.JSON(http.StatusOK, gin.H{"result": r})
+			c.JSON(http.StatusOK, gin.H{"result": r, "fileName": data.ID + ".json"})
 		}
 	} else {
 		c.JSON(http.StatusNotFound, gin.H{"error": "QR not found on image, please try again"})
