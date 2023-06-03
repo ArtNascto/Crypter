@@ -36,7 +36,7 @@ export class DecryptComponent {
       reader.onerror = error => reject(error);
     });
   }
-  b64toBlob(b64Data: string, sliceSize = 512): Blob {
+  b64toBlob(b64Data: string, contentType: string, sliceSize = 512): Blob {
     const byteCharacters = atob(b64Data);
     const byteArrays = [];
 
@@ -52,7 +52,7 @@ export class DecryptComponent {
       byteArrays.push(byteArray);
     }
 
-    const blob = new Blob(byteArrays, { type: 'image/png' });
+    const blob = new Blob(byteArrays, { type: contentType });
     return blob;
   }
   async decodeQR() {
@@ -65,7 +65,7 @@ export class DecryptComponent {
         .post<QRDecodeOutput>(environment.apis.qr.decrypt + '/decrypt', { data: b64 }, options)
         .subscribe(
           (r: QRDecodeOutput) => {
-            let blob = this.b64toBlob(r.data);
+            let blob = this.b64toBlob(r.data, r.contentType);
             let objectURL = URL.createObjectURL(blob);
             let a: any = document.createElement('a');
             document.body.appendChild(a);

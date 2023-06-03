@@ -34,7 +34,7 @@ export class ScanCameraComponent {
   public get nextWebcamObservable(): Observable<any> {
     return this.nextWebcam.asObservable();
   }
-  b64toBlob(b64Data: string, sliceSize = 512): Blob {
+  b64toBlob(b64Data: string, contentType: string, sliceSize = 512): Blob {
     const byteCharacters = atob(b64Data);
     const byteArrays = [];
 
@@ -50,7 +50,7 @@ export class ScanCameraComponent {
       byteArrays.push(byteArray);
     }
 
-    const blob = new Blob(byteArrays, { type: 'image/png' });
+    const blob = new Blob(byteArrays, { type: contentType });
     return blob;
   }
   decrypt(data: string) {
@@ -68,7 +68,7 @@ export class ScanCameraComponent {
       )
       .subscribe(
         r => {
-          let blob = this.b64toBlob(r.data);
+          let blob = this.b64toBlob(r.data, r.contentType);
           let objectURL = URL.createObjectURL(blob);
           let a: any = document.createElement('a');
           document.body.appendChild(a);
