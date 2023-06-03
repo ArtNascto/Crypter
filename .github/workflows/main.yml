@@ -32,8 +32,6 @@ jobs:
           docker tag kreati/crypter/decrypter registry.digitalocean.com/kreati/crypter/decrypter:${{github.run_id }}
           docker tag kreati/crypter/generator registry.digitalocean.com/kreati/crypter/generator:${{github.run_id }}
           docker tag kreati/crypter/scanner registry.digitalocean.com/kreati/crypter/scanner:${{github.run_id }}
-      - name: Tag image Latest
-        run: |
           docker tag kreati/crypter/client/ui registry.digitalocean.com/kreati/crypter/client/ui:latest
           docker tag kreati/crypter/client/api registry.digitalocean.com/kreati/crypter/client/api:latest
           docker tag kreati/crypter/client/migrator registry.digitalocean.com/kreati/crypter/client/migrator:latest
@@ -48,8 +46,6 @@ jobs:
           docker push registry.digitalocean.com/kreati/crypter/decrypter:${{github.run_id }}
           docker push registry.digitalocean.com/kreati/crypter/generator:${{github.run_id }}
           docker push registry.digitalocean.com/kreati/crypter/scanner:${{github.run_id }}
-      - name: Push image to DO Container Registry latest
-        run: |
           docker push registry.digitalocean.com/kreati/crypter/client/ui:latest
           docker push registry.digitalocean.com/kreati/crypter/client/api:latest
           docker push registry.digitalocean.com/kreati/crypter/client/migrator:latest
