@@ -109,7 +109,7 @@ func EncryptQrCode(c *gin.Context) {
 }
 func GenerateQR(data string) (string, error) {
 	var png []byte
-	png, err := qrcode.Encode(data, qrcode.Low, 256)
+	png, err := qrcode.Encode(data, qrcode.Low, 540)
 	if err != nil {
 		return "", err
 	}
