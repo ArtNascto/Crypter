@@ -2259,9 +2259,9 @@ sver-compat@^1.5.0:
     es6-symbol "^3.1.1"
 
 sweetalert2@^11.3.6:
-  version "11.7.3"
-  resolved "https://registry.yarnpkg.com/sweetalert2/-/sweetalert2-11.7.3.tgz#e81ad273903a644b60d1ee0359626cc4c4ac860d"
-  integrity sha512-fUN/fyVSBZNtY4Rr/Qtxn7tNNnlRAbUhQxTQ9uOo0xVMIHBmqq4/9pau5N9dB2pvkB353XL/ywRAycscLoYU3w==
+  version "11.22.4"
+  resolved "https://registry.yarnpkg.com/sweetalert2/-/sweetalert2-11.22.4.tgz#772e6448cef4e753c6c429e96d233b7e701210ed"
+  integrity sha512-JwcRODfozxiKmspFp+xctZ2izAmLAKbRPcoLMEW7LdugN/YmNrX1LT7hdBW87qsgupEO1ukBBuB17KzKFKW0tg==
 
 through2-filter@^3.0.0:
   version "3.0.0"
